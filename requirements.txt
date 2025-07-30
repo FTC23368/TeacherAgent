@@ -7,3 +7,4 @@ langchain_openai
 langgraph
 markdown
 pydantic
+langchain_core
