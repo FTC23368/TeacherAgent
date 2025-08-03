@@ -12,7 +12,7 @@
    source venv/bin/activate  # (macOS/Linux)  
    venv\Scripts\activate     # (Windows)
 
-5. Create .gitignore file and add .streamlit/secrets.toml
+5. Create .gitignore file and add .streamlit/secrets.toml and venv/
 
 6. Create .streamlit folder and add secrets.toml
 
@@ -24,11 +24,11 @@
 
 10. Create prompt_store.py
 
-11. Create sub-agents i.e., math_agent.py, reading_agent.py, writing_agent.py
+11. Create sub-agents i.e., smalltalk_agent.py, clarify_agent.py, math_agent.py, reading_agent.py, writing_agent.py
 
 12. Create graph.py
 
-13. Create teacherapp.py
+13. Create app.py
 
 14. Commit code in GitHub
 
