@@ -24,31 +24,43 @@ def start_chat():
         with st.chat_message("user"):
             st.markdown(prompt)
 
-    message_history = []
-    msgs = st.session_state.messages
+        message_history = []
+        msgs = st.session_state.messages
 
-    for m in msgs:
-        if m["role"] == "user":
-            message_history.append(HumanMessage(content=m["content"]))
-        elif m["role"] == "assistant":
-            message_history.append(AIMessage(content=m["content"]))
+        for m in msgs:
+            if m["role"] == "user":
+                message_history.append(HumanMessage(content=m["content"]))
+            elif m["role"] == "assistant":
+                message_history.append(AIMessage(content=m["content"]))
 
-    app = TeacherAgent(st.secrets['OPENAI_API_KEY'])
-    thread = {"configurable": {"thread_id": thread_id}}
-    parameters = {
-        "initial_message": prompt,
-        "message_history": message_history,
-    }
+        app = TeacherAgent(st.secrets['OPENAI_API_KEY'])
+        thread = {"configurable": {"thread_id": thread_id}}
+        parameters = {
+            "initial_message": prompt,
+            "message_history": message_history,
+        }
 
-    for s in app.graph.stream(parameters, thread):
         with st.spinner("Thinking ...", show_time=True):
             full_response = ""
-            if resp := s.get("incrementalResponse"):
-                placeholder = st.empty()
-                for response in resp:
-                    full_response += response.content
-                    placeholder.markdown(full_response)
-        st.session_state.messages.append({"role": "assistant", "content": full_response})
+            placeholder = None
+            
+            for step in app.graph.stream(parameters, thread):
+                # Look for incremental responses in any node output
+                for node_output in step.values():
+                    if isinstance(node_output, dict) and "incrementalResponse" in node_output:
+                        # Create chat message container only once
+                        if placeholder is None:
+                            with st.chat_message("assistant"):
+                                placeholder = st.empty()
+                        
+                        # Stream the incremental response
+                        for response in node_output["incrementalResponse"]:
+                            full_response += response.content
+                            placeholder.markdown(full_response)
+            
+            # Add to session state only after all streaming is complete
+            if full_response:
+                st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 
 if __name__ == '__main__':

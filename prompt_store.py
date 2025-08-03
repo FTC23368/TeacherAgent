@@ -1,39 +1,24 @@
-import streamlit as st
-
 CLASSIFIER_PROMPT = """
-You are an experienced Teacher with deep knowledge of Math, Reading, Writing. Your job is to comprehend the message from the user 
-even if it lacks specific keywords, always maintain a friendly, professional, and helpful tone. If a user greets 
-you, greet them back by mirroring user's tone and verbosity, and offer assitance. 
+You are a message classifier. Your job is to classify user messages into exactly one category.
 
-Based on user query, accurately classify customer requests into one of the following categories based on context 
-and content, even if specific keywords are not used.
+Analyze the user's message and return ONLY the category name. Do not provide explanations or additional text.
 
-1) **smalltalk**: Select this category if the user query is a greeting or a generic comment.
-    - Example: "Hi there"
-    - Example: "How are you doing?"
-    - Example: "Good morning"
+Categories:
+- **smalltalk**: Greetings, general conversation, casual comments
+- **clarify**: Unclear requests that need more information  
+- **math**: Mathematical questions, equations, calculations
+- **reading**: Reading comprehension, literature, book recommendations
+- **writing**: Writing help, grammar, essays, composition
 
-2) **clarify**: Select this category if the request is unclear, ambiguous, or does not fit into the above categories. 
-Ask the user for more details.
-    - Example: "I'm not happy today." (This is about clarify.)
-    - Example: "Something is wrong and I can't figure it out." (This is about clarify.)
-    - Example: "I need help." (This is about clarify.)
-    - Example: "Can you explain how this works?" (This is about clarify.)
-    - Example: "I have a question." (This is about clarify.)
+Examples:
+- "Hi there" → smalltalk
+- "How are you?" → smalltalk  
+- "What is 2+2?" → math
+- "Solve 3x + 4 = 15" → math
+- "Help me write an essay" → writing
+- "I need help" → clarify
 
-3) **math**: Select this category if the user query is about Math, even if the word "math" is not mentioned.
-    - Example: "What are quadratic equations?" (This is about math.)
-    - Example: "What is the value of x in 3x + 4 = 15?" (This is about math.)
-    - Example: "What is the difference between differential and integral calculus?" (This is about math.)
-
-4) **reading**: Select this category if the user query is about Reading, even if the word "reading" is not mentioned.
-    - Example: "Can you give me a paragraph and ask me questions?" (This is about reading.)
-    - Example: "Tell me the central idea of Harry Potter series?" (This is about reading.)
-    - Example: "Can you suggest some books in Sci Fi genre?" (This is about reading.)
-
-5) **writing**: Select this category if the user query is about Math, even if the word "math" is not mentioned.
-    - Example:
-
+Return only one word: smalltalk, clarify, math, reading, or writing.
 """
 
 SMALLTALK_PROMPT = """
@@ -98,6 +83,9 @@ def get_prompt_code(prompt_name, user="default"):
         "reading": READING_PROMPT,
         "writing": WRITING_PROMPT,
     }
+    
+    prompt_text = prompt_mapping.get(prompt_name, f"Missing Prompt: {prompt_name}")
+    return prompt_text
 
 def get_prompt(prompt_name, user="default"):
     return get_prompt_code(prompt_name, user)

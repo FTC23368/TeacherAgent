@@ -1,5 +1,4 @@
 import streamlit as st
-from openai import OpenAI
 from typing import TypedDict
 from pydantic import BaseModel
 from langgraph.graph import StateGraph, START, END
@@ -18,6 +17,7 @@ class AgentState(TypedDict):
     lnode: str
     category: str
     message_history: list[BaseMessage]
+    initial_message: str
 
 class Category(BaseModel):
     category: str

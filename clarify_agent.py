@@ -1,4 +1,3 @@
-import streamlit as st
 from langchain_core.messages import BaseMessage
 from create_llm_message import create_llm_msg
 from prompt_store import get_prompt
@@ -9,7 +8,7 @@ class ClarifyAgent:
 
     def generate_response(self, message_history: list[BaseMessage]):
         user_query = message_history[-1].content
-        clarify_prompt = get_prompt("math").format(user_query=user_query)
+        clarify_prompt = get_prompt("clarify").format(user_query=user_query)
         llm_messages = create_llm_msg(clarify_prompt, message_history)
         return self.model.stream(llm_messages)
     
